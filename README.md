@@ -142,3 +142,110 @@ pass1.py
                     │
                     ↓
                 Object Code
+
+
+               ## Working procedure
+
+## Pass 1 algorithm works
+
+START
+  ↓
+Read first line
+  ↓
+Initialize LOCCTR
+  ↓
+Read next line
+  ↓
+Is there a label?
+  ├── YES → Add LABEL + LOCCTR to SYMTAB
+  └── NO
+  ↓
+Is it an instruction?
+  ├── YES → LOCCTR = LOCCTR + 3
+  └── NO
+  ↓
+Is it WORD?
+  ├── YES → LOCCTR = LOCCTR + 3
+  ↓
+Is it RESW?
+  ├── YES → LOCCTR = LOCCTR + 3 × operand
+  ↓
+Is it RESB?
+  ├── YES → LOCCTR = LOCCTR + operand
+  ↓
+Is it BYTE?
+  ├── YES → calculate BYTE size
+  ↓
+Is it END?
+  ├── YES → Stop
+  └── NO → Read next line
+
+## Pass 2 algorithm works
+
+START
+  ↓
+Read intermediate file
+  ↓
+Read next line
+  ↓
+Is it START?
+  ↓
+Skip
+  ↓
+Is opcode in OPTAB?
+  ├── YES
+  │    ↓
+  │  Get opcode
+  │    ↓
+  │  Find operand in SYMTAB
+  │    ↓
+  │  Generate object code
+  │
+  └── NO
+       ↓
+     Is WORD?
+       ↓
+     Generate 3-byte value
+
+     Is BYTE?
+       ↓
+     Convert to hexadecimal
+
+     Is RESW / RESB?
+       ↓
+     No object code
+  ↓
+Is END?
+  ├── YES → Generate End Record
+  └── NO → Read next line
+  ↓
+STOP
+
+## TWO-PASS ASSEMBLER
+
+SOURCE PROGRAM
+       │
+       ▼
+   ┌─────────┐
+   │ PASS 1  │
+   └─────────┘
+       │
+       ├── SYMTAB
+       ├── LOCCTR
+       ├── Addresses
+       └── Intermediate File
+              │
+              ▼
+        ┌─────────┐
+        │ PASS 2  │
+        └─────────┘
+              │
+              ├── OPTAB
+              ├── SYMTAB
+              └── Intermediate File
+                     │
+                     ▼
+               OBJECT CODE
+                     │
+                     ▼
+              OBJECT PROGRAM
